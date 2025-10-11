@@ -1,14 +1,16 @@
-import React from 'react';
-// Ya no necesitas importar el CSS si lo eliminaste/vaciaste
+// src/App.jsx
 
+import React from 'react';
+// ELIMINA o deja vacío el return:
 function App() {
-  // Opcional: Si quieres un mensaje simple
   return (
-    <div>
-      <h1>¡Hola.</h1>
-      {/* Aquí irá el componente RouterProvider */}
-    </div>
+    // ¡Debe estar vacío o solo contener un fragmento!
+    <></>
   );
 }
 
 export default App;
+
+// Si tu router está funcionando correctamente, el código que se está renderizando
+// en tu raíz ("/") es el que pusiste en 'src/pages/LoginPage.jsx'.
+// Ve a ese archivo y elimina el "Hola" que pusiste antes.
