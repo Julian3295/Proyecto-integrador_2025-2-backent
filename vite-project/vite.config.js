@@ -7,10 +7,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': { 
+        // 🎯 La URL de la API del profesor
         target: 'https://api-sistema-notas.onrender.com', 
         changeOrigin: true,
-        secure: true, // Volvemos a 'true'
-        // 🎯 ESTA LÍNEA ES LA SOLUCIÓN DEL 404
+        secure: true,
+        // 🎯 CRUCIAL: Reemplazar el prefijo /api/ por la ruta vacía
         rewrite: (path) => path.replace(/^\/api/, ''), 
       },
     },
