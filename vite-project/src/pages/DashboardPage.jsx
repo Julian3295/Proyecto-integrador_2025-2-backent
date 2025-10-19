@@ -45,10 +45,32 @@ const DashboardPage = () => {
         }
     }, [navigate]);
 
-    // ... (El resto del componente sigue abajo)
-// ...
+if (loading) {
+        return (
+            <div className="dashboard-loading">
+                <h1>Cargando Dashboard...</h1>
+            </div>
+        );
+    }
 
-    // ... (handleLogout y return del componente) ...
-};
+    // 2. Renderizar el Dashboard una vez que los datos estén listos
+    // Asegúrate que reports no sea null antes de usarlo si es necesario
+    return (
+        <div className="dashboard-content">
+            <h1>Panel de Control Principal</h1>
+            <p>Bienvenido, {currentUser ? currentUser.nombre : 'Usuario'}!</p>
+            
+            {/* Si tienes reportes, muéstralos, sino, muestra un mensaje */}
+            {reports && reports.totalUsuarios ? (
+                // Aquí irían tus componentes ReportCard, Gráfico, etc.
+                <p>Total de Usuarios cargados: {reports.totalUsuarios}</p>
+            ) : (
+                <p>No se encontraron datos de reportes.</p>
+            )}
+
+            {/* <button onClick={handleLogout}>Cerrar Sesión</button> */}
+        </div>
+    );
+}; 
 
 export default DashboardPage;
