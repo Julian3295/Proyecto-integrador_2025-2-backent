@@ -1,14 +1,10 @@
-// src/pages/DashboardPage.jsx
+// src/pages/DashboardPage.jsx (VERSIÓN FINAL)
 
 import React, { useEffect, useState } from 'react';
+import ReportCard from '../components/ReportCard' // 🎯 Componente Importado
 import { useNavigate } from 'react-router-dom';
 import { getPlatformReports } from '../api/reportService'; 
 
-// ... (ReportCard y demás componentes) ...
-
-// src/pages/DashboardPage.jsx (FRAGMENTO CORREGIDO Y COMPLETO)
-
-// ...
 const DashboardPage = () => {
     const navigate = useNavigate();
     const [currentUser, setCurrentUser] = useState(null);
@@ -17,12 +13,12 @@ const DashboardPage = () => {
 
     // Lógica para cargar reportes Y PROTEGER LA RUTA
     useEffect(() => {
-        const userString = localStorage.getItem('currentUser'); // 👈 Aquí se define 'userString'
+        const userString = localStorage.getItem('currentUser'); 
 
         if (userString) {
             const user = JSON.parse(userString);
             
-            // 🎯 Protección: Usamos 'user.rol' porque así lo define la API
+            // Protección de rol: Verifica si es profesor o coordinador
             if (user.rol !== 'profesor' && user.rol !== 'coordinador') { 
                 alert("Acceso Denegado: Tu perfil no tiene permiso para ver este panel.");
                 localStorage.removeItem('currentUser'); 
@@ -30,11 +26,9 @@ const DashboardPage = () => {
                 return;
             }
             
-            // Si el perfil es correcto, cargar la información del Dashboard
             setCurrentUser(user);
             const fetchReports = async () => {
                 setLoading(true);
-                // ESTA FUNCIÓN NECESITA QUE EXISTA src/api/reportService.js
                 const data = await getPlatformReports(); 
                 setReports(data);
                 setLoading(false);
@@ -45,7 +39,8 @@ const DashboardPage = () => {
         }
     }, [navigate]);
 
-if (loading) {
+    // 1. Mostrar estado de carga (Return si loading es true)
+    if (loading) {
         return (
             <div className="dashboard-loading">
                 <h1>Cargando Dashboard...</h1>
@@ -53,22 +48,38 @@ if (loading) {
         );
     }
 
-    // 2. Renderizar el Dashboard una vez que los datos estén listos
-    // Asegúrate que reports no sea null antes de usarlo si es necesario
+    // 2. Renderizar el Dashboard (Return principal)
     return (
         <div className="dashboard-content">
             <h1>Panel de Control Principal</h1>
             <p>Bienvenido, {currentUser ? currentUser.nombre : 'Usuario'}!</p>
             
-            {/* Si tienes reportes, muéstralos, sino, muestra un mensaje */}
-            {reports && reports.totalUsuarios ? (
-                // Aquí irían tus componentes ReportCard, Gráfico, etc.
-                <p>Total de Usuarios cargados: {reports.totalUsuarios}</p>
-            ) : (
-                <p>No se encontraron datos de reportes.</p>
-            )}
-
-            {/* <button onClick={handleLogout}>Cerrar Sesión</button> */}
+            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                {reports && (
+                    <>
+                        <ReportCard 
+                            title="Total de Estudiantes" 
+                            value={reports.totalEstudiantes} 
+                            icon="🧑‍🎓"
+                        />
+                        <ReportCard 
+                            title="Total de Profesores" 
+                            value={reports.totalProfesores} 
+                            icon="👨‍🏫"
+                        />
+                        <ReportCard 
+                            title="Estudiantes Aprobados" 
+                            value={reports.aprobados} 
+                            icon="✅"
+                        />
+                        <ReportCard 
+                            title="Estudiantes Reprobados" 
+                            value={reports.reprobados} 
+                            icon="❌"
+                        />
+                    </>
+                )}
+            </div>
         </div>
     );
 }; 
