@@ -1,4 +1,5 @@
 // vite.config.js
+
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -7,11 +8,10 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': { 
-        // 🎯 La URL de la API del profesor
         target: 'https://api-sistema-notas.onrender.com', 
         changeOrigin: true,
         secure: true,
-        // 🎯 CRUCIAL: Reemplazar el prefijo /api/ por la ruta vacía
+        // ESTA LÍNEA ES EL ARREGLO DEL 404 (debe estar activada)
         rewrite: (path) => path.replace(/^\/api/, ''), 
       },
     },
