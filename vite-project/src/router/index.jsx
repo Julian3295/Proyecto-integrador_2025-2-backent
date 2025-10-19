@@ -1,7 +1,10 @@
-// src/router/index.jsx (o donde definiste tus rutas)
+// src/router/index.jsx
+
 import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from '../pages/LoginPage';
-import DashboardPage from '../pages/DashboardPage'; // 👈 Asegúrate de importar
+import DashboardPage from '../pages/DashboardPage'; 
+// 🎯 1. IMPORTA EL NUEVO COMPONENTE DE DETALLE
+import StudentDetailPage from '../pages/StudentDetailPage'; 
 
 export const router = createBrowserRouter([
   {
@@ -9,9 +12,13 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    // 🎯 AÑADE ESTA RUTA FALTANTE
     path: "/dashboard",
     element: <DashboardPage />, 
+  },
+  {
+    // 🎯 2. AÑADE LA RUTA DINÁMICA
+    path: "/estudiantes/:id", // :id es el parámetro que capturaremos
+    element: <StudentDetailPage />, 
   },
   // ...
 ]);

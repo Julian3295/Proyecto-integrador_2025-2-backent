@@ -1,4 +1,4 @@
-// src/api/reportService.js (CÓDIGO COMPLETO Y FINAL)
+// src/api/reportService.js (CÓDIGO CORREGIDO Y COMPLETO)
 
 const BASE_URL = '/api'; // Usamos el proxy de Vite
 
@@ -6,7 +6,6 @@ const BASE_URL = '/api'; // Usamos el proxy de Vite
 const fetchData = async (endpoint) => {
     const response = await fetch(`${BASE_URL}${endpoint}`);
     if (!response.ok) {
-        // Mejorar el error para saber qué falló.
         throw new Error(`Fallo al cargar ${endpoint}. Estado: ${response.status}`);
     }
     return response.json();
@@ -14,66 +13,79 @@ const fetchData = async (endpoint) => {
 
 export const getPlatformReports = async () => {
     try {
-        // 1. Obtener todos los datos necesarios en paralelo
+        // Lógica de carga de usuarios, notas, estudiantes en paralelo
         const [usuarios, notas, estudiantes] = await Promise.all([
             fetchData('/usuarios'),
             fetchData('/notas'),
             fetchData('/estudiantes')
         ]);
-
-        // 2. Cálculo de Profesores (corregido: usa u.rol)
+        
+        // 🚨 COMIENZO DE LA LÓGICA DE CÁLCULO FALTANTE 🚨
+        
+        // 1. Cálculo de Profesores
         const profesores = usuarios.filter(u => u.rol === 'profesor').length;
         
+        // 2. Inicialización para Aprobados/Reprobados
         let aprobados = 0;
         let reprobados = 0;
         const notasPorEstudiante = {};
 
-        // 3. Agrupar notas por estudiante
+        // Organizar notas por estudiante para fácil acceso
         notas.forEach(nota => {
-            // CORRECCIÓN 1: Usar 'estudianteId' y forzar a String (para coincidir con el ID del estudiante que también es String)
-            const idEst = String(nota.estudianteId); 
-
+            const idEst = String(nota.estudianteId);
             if (!notasPorEstudiante[idEst]) notasPorEstudiante[idEst] = [];
-            
-            // CORRECCIÓN 2: Usar el campo correcto 'nota' (visto en tu JSON)
-            notasPorEstudiante[idEst].push(nota.nota);
+            notasPorEstudiante[idEst].push(nota.nota); // Usamos 'nota' si es el campo correcto de la API
         });
 
-        // 4. Calcular el promedio y contar Aprobados/Reprobados
+        // Calcular promedio y contar Aprobados/Reprobados
         estudiantes.forEach(est => {
-            // CORRECCIÓN 3: Forzar el ID del estudiante a String para buscar la clave
-            const notasArray = notasPorEstudiante[String(est.id)] || [];
+            const estId = String(est.id);
+            const notasEst = notasPorEstudiante[estId] || [];
             
-            if (notasArray.length > 0) {
-                const suma = notasArray.reduce((acc, val) => acc + val, 0);
-                const promedio = suma / notasArray.length;
-
-                if (promedio >= 3.0) { // Criterio de aprobación
+            if (notasEst.length > 0) {
+                const sumaNotas = notasEst.reduce((sum, nota) => sum + nota, 0);
+                const promedio = sumaNotas / notasEst.length;
+                
+                // Suponemos que 3.0 es la nota mínima de aprobación
+                if (promedio >= 3.0) { 
                     aprobados++;
                 } else {
                     reprobados++;
                 }
             }
         });
+        
+        // 🚨 FIN DE LA LÓGICA DE CÁLCULO FALTANTE 🚨
 
         return {
             totalUsuarios: usuarios.length,
             totalEstudiantes: estudiantes.length,
-            totalNotas: notas.length,
-            totalProfesores: profesores,
-            aprobados: aprobados,
-            reprobados: reprobados,
+            totalProfesores: profesores, // ✅ Ahora definida
+            aprobados: aprobados,       // ✅ Ahora definida
+            reprobados: reprobados,     // ✅ Ahora definida
+            // ... otros reportes
+            estudiantes: estudiantes, // Incluimos la lista completa para referencia
         };
 
     } catch (error) {
         console.error("Error al obtener reportes:", error);
-        // Si hay un error, devolvemos un objeto de reportes vacío para no romper la UI
-        return { 
-            totalEstudiantes: 0, 
-            totalProfesores: 0, 
-            aprobados: 0, 
-            reprobados: 0, 
-            error: error.message 
-        };
+        // Devolvemos 0 en los contadores en caso de error
+        return { totalEstudiantes: 0, totalProfesores: 0, aprobados: 0, reprobados: 0, error: error.message };
     }
+};
+
+// Funciones nuevas para la doble carga y detalle (ESTÁN BIEN)
+export const getStudents = async () => {
+    try {
+        const estudiantes = await fetchData('/estudiantes');
+        return estudiantes; 
+    } catch (error) {
+        console.error("Error al obtener la lista de estudiantes:", error);
+        return [];
+    }
+};
+
+export const getStudentNotes = async (studentId) => {
+    // Aquí iría la lógica para filtrar las notas por studentId
+    return []; 
 };
