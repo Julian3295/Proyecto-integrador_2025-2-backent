@@ -99,8 +99,8 @@ const StudentDetailPage = () => {
                 <tbody>
                     {notas.map((notaItem) => (
                         <tr key={notaItem.id}>
-                            <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                                {notaItem.curso || `Materia Desconocida`} 
+                            <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'left' }}>
+                                {notaItem.materiaNombre} 
                             </td>
                             {/* 🎯 CELDA DE NOTA CON LÓGICA DE EDICIÓN */}
                             <td style={{ border: '1px solid #ccc', padding: '10px', textAlign: 'center' }}>
