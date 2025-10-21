@@ -1,16 +1,25 @@
-// src/App.jsx
+// src/App.jsx (o donde tengas definido el Router)
 
-import React from 'react';
-// ELIMINA o deja vacío el return:
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import DashboardPage from './pages/DashboardPage';
+// 🎯 IMPORTA EL NUEVO COMPONENTE
+import StudentDetailPage from './pages/StudentDetailPage'; 
+
 function App() {
   return (
-    // ¡Debe estar vacío o solo contener un fragmento!
-    <></>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        
+        {/* 🎯 RUTA DINÁMICA: CAPTURA EL ID DEL ESTUDIANTE */}
+        <Route path="/estudiantes/:id" element={<StudentDetailPage />} />
+        
+        <Route path="*" element={<h1>404 - Página no encontrada</h1>} />
+      </Routes>
+    </Router>
   );
 }
 
 export default App;
-
-// Si tu router está funcionando correctamente, el código que se está renderizando
-// en tu raíz ("/") es el que pusiste en 'src/pages/LoginPage.jsx'.
-// Ve a ese archivo y elimina el "Hola" que pusiste antes.

@@ -85,7 +85,76 @@ export const getStudents = async () => {
     }
 };
 
+// src/api/reportService.js
+// ... (código de getStudents)
+
 export const getStudentNotes = async (studentId) => {
-    // Aquí iría la lógica para filtrar las notas por studentId
-    return []; 
+    // Declaramos estudiantes y notas aquí para manejar el scope en caso de error
+    let estudiantes;
+    let notas;
+    
+    try {
+        // ASIGNACIÓN: Obtenemos los datos de la API
+        [estudiantes, notas] = await Promise.all([
+            fetchData('/estudiantes'),
+            fetchData('/notas'),
+        ]);
+
+        // Verificamos que los datos sean arrays antes de usarlos
+        if (!Array.isArray(estudiantes) || !Array.isArray(notas)) {
+            throw new Error('Datos de la API no válidos (no son arrays).');
+        }
+
+        // Lógica de TIPO DE DATOS: ID de Estudiante es STRING, Notas es NUMBER
+        const targetIdString = studentId; 
+        const targetIdNumber = parseInt(studentId, 10); 
+
+        // 1. BUSCAR ESTUDIANTE (usa STRING, ya que est.id es STRING)
+        const estudiante = estudiantes.find(est => est.id === targetIdString); 
+        
+        if (!estudiante) {
+            return { error: 'Estudiante no encontrado' }; 
+        }
+
+        // 2. FILTRAR NOTAS (usa NUMBER, ya que nota.estudianteId es NUMBER)
+        const notasEstudiante = notas.filter(nota => nota.estudianteId === targetIdNumber);
+        
+        return {
+            estudiante: estudiante,
+            notas: notasEstudiante,
+        };
+
+    } catch (error) {
+        console.error(`Error en getStudentNotes para ID ${studentId}:`, error);
+        return { error: `Fallo de API: ${error.message}` };
+    }
+}; 
+
+// 🎯 UBICACIÓN Y EXPORTACIÓN CORRECTA DE updateStudentNote
+export const updateStudentNote = async (noteId, newScore) => {
+    // ... (Tu código de updateStudentNote está correcto aquí) ...
+    const endpoint = `/notas/${noteId}`;
+    
+    const notaNumerica = parseFloat(newScore);
+    
+    if (isNaN(notaNumerica) || notaNumerica < 0 || notaNumerica > 5.0) {
+        throw new Error("La nota debe ser un número entre 0.0 y 5.0."); 
+    }
+
+    const response = await fetch(`${BASE_URL}${endpoint}`, {
+        method: 'PATCH', 
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            nota: notaNumerica 
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error(`Fallo al actualizar la nota ${noteId}. Estado: ${response.status}`);
+    }
+    
+    return response.json();
 };
+// <--- ¡NO DEBE HABER NINGÚN CÓDIGO NI LLAVES EXTRA DESPUÉS DE ESTO!
