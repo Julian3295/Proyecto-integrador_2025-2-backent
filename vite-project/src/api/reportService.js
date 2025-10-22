@@ -1,4 +1,4 @@
-// src/api/reportService.js (CÓDIGO COMPLETO Y REVISADO)
+// src/api/reportService.js (CÓDIGO FINAL CORREGIDO)
 
 const BASE_URL = '/api'; // Usamos el proxy de Vite
 
@@ -29,7 +29,10 @@ export const getPlatformReports = async () => {
         let reprobados = 0;
         const notasPorEstudiante = {};
 
-        notas.forEach(nota => {
+        // Convertimos notas a números (si no lo son) para asegurar la lógica
+        const notasNumericas = notas.map(n => ({...n, nota: parseFloat(n.nota)}));
+
+        notasNumericas.forEach(nota => {
             const idEst = String(nota.estudianteId);
             if (!notasPorEstudiante[idEst]) notasPorEstudiante[idEst] = [];
             notasPorEstudiante[idEst].push(nota.nota);
@@ -84,36 +87,36 @@ export const getStudents = async () => {
 // 3. Student Detail and Notes (Incluye mapeo de materia)
 // -------------------------------------------------------------
 export const getStudentNotes = async (studentId) => {
-    let estudiantes;
-    let notas;
-    let materias;
-    
     try {
-        // Obtenemos los 3 arrays en paralelo
-        [estudiantes, notas, materias] = await Promise.all([
+        // Obtenemos los 3 arrays en paralelo directamente en constantes
+        const [estudiantes, notas, materias] = await Promise.all([
             fetchData('/estudiantes'),
             fetchData('/notas'),
-            fetchData('/materias'), // Nueva llamada
+            fetchData('/materias'),
         ]);
 
+        // Aseguramos que las notas son números
+        const notasNumericas = notas.map(n => ({...n, nota: parseFloat(n.nota)}));
+
         // Verificamos que los datos sean arrays
-        if (!Array.isArray(estudiantes) || !Array.isArray(notas) || !Array.isArray(materias)) {
-            throw new Error('Datos de la API no válidos (falló la carga de estudiantes, notas o materias).');
+        if (!Array.isArray(estudiantes) || !Array.isArray(notasNumericas) || !Array.isArray(materias)) {
+             // Esto ya es un error grave en la API, pero lo manejamos
+             throw new Error('Datos de la API no válidos (falló la carga de estudiantes, notas o materias).');
         }
 
-        // Lógica de TIPO DE DATOS: ID de Estudiante es STRING, Notas es NUMBER
-        const targetIdString = studentId; 
+        const targetIdString = String(studentId); 
         const targetIdNumber = parseInt(studentId, 10); 
 
         // 1. BUSCAR ESTUDIANTE (usa STRING vs STRING)
-        const estudiante = estudiantes.find(est => est.id === targetIdString); 
+        const estudiante = estudiantes.find(est => String(est.id) === targetIdString); 
         
         if (!estudiante) {
             return { error: 'Estudiante no encontrado' }; 
         }
 
         // 2. FILTRAR Y ENRIQUECER NOTAS (mapeo y enriquecimiento)
-        const notasEstudiante = notas
+        const notasEstudiante = notasNumericas
+            // Filtramos por el ID NUMÉRICO (asumiendo que los ID's de notas son números)
             .filter(nota => nota.estudianteId === targetIdNumber)
             .map(nota => {
                 // Buscamos la materia. Usamos String() para asegurar la comparación de IDs.
@@ -134,6 +137,7 @@ export const getStudentNotes = async (studentId) => {
 
     } catch (error) {
         console.error(`Error en getStudentNotes para ID ${studentId}:`, error);
+        // El error de notas not defined era probablemente por el error de sintaxis
         return { error: `Fallo de API: ${error.message}` };
     }
 }; 
