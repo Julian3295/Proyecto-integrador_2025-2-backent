@@ -1,4 +1,4 @@
-// src/api/reportService.js (CÓDIGO FINAL CORREGIDO)
+// src/api/reportService.js (VERSIÓN FINAL Y FUNCIONAL)
 
 const BASE_URL = '/api'; // Usamos el proxy de Vite
 
@@ -137,7 +137,6 @@ export const getStudentNotes = async (studentId) => {
 
     } catch (error) {
         console.error(`Error en getStudentNotes para ID ${studentId}:`, error);
-        // El error de notas not defined era probablemente por el error de sintaxis
         return { error: `Fallo de API: ${error.message}` };
     }
 }; 
