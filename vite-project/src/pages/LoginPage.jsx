@@ -1,77 +1,83 @@
-// src/pages/LoginPage.jsx (CÓDIGO CORREGIDO)
+// src/pages/LoginPage.jsx (VERSION FINAL LIMPIA - Sin Bypass)
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../api/authService'; 
+import { loginUser } from '../api/authService'; // <-- Asumo que esta API funciona o es simulada
+import { FaLock, FaEnvelope } from 'react-icons/fa'; 
 
 const LoginPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    
-    // 🎯 Estados corregidos para los mensajes y la carga
-    const [mensaje, setMensaje] = useState(''); // Usaremos 'mensaje' para errores/éxito
-    const [cargando, setCargando] = useState(false); // Usaremos 'cargando' para el botón
-    
-    const navigate = useNavigate(); 
+    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const navigate = useNavigate();
 
-    // 🎯 Función de manejo de Login renombrada a handleSubmit
-    // O puedes cambiar en el return a onSubmit={handleLogin}
-    const handleSubmit = async (e) => { 
+    const handleChange = (e) => {
+        setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    };
+
+    const handleLogin = async (e) => {
         e.preventDefault();
-        
-        // 🎯 Usar el estado definido: setMensaje, setCargando
-        setMensaje(''); 
-        setCargando(true); 
-
         try {
-            // Asumiendo que authService.js usa 'email' y 'password' como entrada
-            const user = await loginUser(email, password); 
-
-            if (user) {
-                // Login Exitoso
+            // Llama a tu servicio de API real/simulada
+            const user = await loginUser(credentials); 
+            
+            if (user && user.token) { 
                 localStorage.setItem('currentUser', JSON.stringify(user));
-                // 🎯 Mensaje para el usuario (opcional, ya que se redirige)
-                setMensaje('✅ ¡Acceso exitoso!');
                 navigate('/dashboard'); 
             } else {
-                // Login Fallido
-                setMensaje('❌ Credenciales incorrectas.'); // Usar setMensaje
+                alert("Credenciales inválidas. Por favor, inténtalo de nuevo.");
             }
-        } catch (e) {
-             // Manejo de errores de conexión (ej: servidor caído)
-            setMensaje('⚠️ Error del servidor. No se pudo conectar al servidor de gestión académica.');
-        } finally {
-             // 🎯 Usar el estado definido: setCargando
-            setCargando(false); 
+        } catch (error) {
+            console.error("Fallo de inicio de sesión:", error);
+            alert("Error al intentar iniciar sesión. Verifica la conexión o el backend.");
         }
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#e0f7fa' }}>
-            {/* 🎯 onSubmit={handleSubmit} ahora es correcto */}
-            <form onSubmit={handleSubmit} style={{ padding: '30px', border: '1px solid #00bcd4', borderRadius: '10px', background: 'white', minWidth: '350px', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
-                
-                <h2 style={{ textAlign: 'center', color: '#00bcd4' }}>Login</h2>
-                
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} 
-                        placeholder="Correo Electrónico" required 
-                        style={{ width: '100%', padding: '10px', margin: '10px 0', border: '1px solid #ccc' }} />
-                
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} 
-                        placeholder="Contraseña" required 
-                        style={{ width: '100%', padding: '10px', margin: '10px 0', border: '1px solid #ccc' }} />
-                
-                <button type="submit" disabled={cargando} 
-                        style={{ width: '100%', padding: '12px', backgroundColor: '#00bcd4', color: 'white', border: 'none', borderRadius: '4px', cursor: cargando ? 'not-allowed' : 'pointer' }}>
-                    {cargando ? 'Verificando...' : 'INICIAR SESIÓN'}
-                </button>
-                
-                {/* 🎯 MENSAJE DE ESTADO */}
-                <p style={{ marginTop: '15px', textAlign: 'center', color: mensaje.startsWith('✅') ? 'green' : mensaje.startsWith('❌') ? 'red' : 'orange' }}>
-                    {mensaje}
-                </p>
-                
-            </form>
+        <div className="login-container">
+            <div className="card">
+                <h1>Log In!</h1>
+
+                <form onSubmit={handleLogin}>
+                    {/* INPUT EMAIL */}
+                    <div className="field">
+                        <FaEnvelope className="input-icon" />
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            name="email"
+                            value={credentials.email}
+                            onChange={handleChange}
+                            className="input-field"
+                            autoComplete="username" 
+                            required
+                        />
+                    </div>
+
+                    {/* INPUT PASSWORD */}
+                    <div className="field" style={{ marginTop: '15px' }}>
+                        <FaLock className="input-icon" />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            name="password"
+                            value={credentials.password}
+                            onChange={handleChange}
+                            className="input-field"
+                            autoComplete="current-password"
+                            required
+                        />
+                    </div>
+
+                    {/* BOTÓN LOGIN */}
+                    <button type="submit" className="btn-login">
+                        LOGIN
+                    </button>
+                    
+                    {/* ENLACE DE RECUPERACIÓN */}
+                    <a href="/reset-password" className="forgot-password">
+                        Forgot your password?
+                    </a>
+                </form>
+            </div>
         </div>
     );
 };

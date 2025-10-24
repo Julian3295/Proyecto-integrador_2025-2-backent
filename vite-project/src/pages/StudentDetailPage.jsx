@@ -1,22 +1,29 @@
-// src/pages/StudentDetailPage.jsx (CÓDIGO CORREGIDO Y FINAL)
+// src/pages/StudentDetailPage.jsx (CÓDIGO CORREGIDO Y COMPLETO)
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { getStudentNotes, updateStudentNote } from '../api/reportService'; 
-import Navbar from '../components/Navbar'; 
-import ProfileSection from '../components/ProfileSection'; 
-import NotesSection from '../components/NotesSection'; 
+
+// ✅ CORRECCIÓN APLICADA: Importación de funciones de API.
+// Asumo que están en '../api/dataService' y se exportan con 'export const nombreFuncion = ...'
+import { 
+    getStudentNotes, 
+    updateStudentNote,
+    // Podrías necesitar getStudentData si la API fuera separada, pero fetchNotes ya lo maneja
+} from '../api/dataService'; 
+
+// ✅ Importaciones corregidas sin llaves
+import Navbar from '../components/Navbar.jsx'; 
+import ProfileSection from '../components/ProfileSection.jsx';
+import NotesSection from '../components/NotesSection.jsx';
 
 const StudentDetailPage = () => {
     const { id } = useParams(); 
     const navigate = useNavigate();
     
-    // Estado inicial que garantiza que estudiante es null y notas es un array vacío
+    // Estados
     const [studentData, setStudentData] = useState({ estudiante: null, notas: [] }); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    
-    // Estados para edición
     const [editingNoteId, setEditingNoteId] = useState(null);
     const [tempScore, setTempScore] = useState('');
 
@@ -25,6 +32,7 @@ const StudentDetailPage = () => {
         setError(null);
         
         try {
+            // Usa la función de API importada
             const data = await getStudentNotes(id);
             
             if (data.error || !data.estudiante) {
@@ -34,17 +42,18 @@ const StudentDetailPage = () => {
                 setStudentData(data);
             }
         } catch (err) {
-            console.error("Fallo al obtener datos:", err);
+            // Muestra el error de referencia en la consola para depuración
+            console.error("Fallo al obtener datos:", err); 
             setError("Error de conexión o fallo de API.");
         } finally {
             setLoading(false);
         }
     }, [id]);
 
-    // MANEJADORES DE EDICIÓN
     const handleEdit = (notaItem) => {
         setEditingNoteId(notaItem.id);
-        setTempScore(notaItem.nota ? notaItem.nota.toFixed(1) : '0.0');
+        // Protege contra notas nulas o indefinidas (Error anteriormente reportado: .toFixed)
+        setTempScore(notaItem.nota !== null && notaItem.nota !== undefined ? notaItem.nota.toFixed(1) : '0.0');
     };
 
     const handleSave = async (noteId) => {
@@ -71,12 +80,12 @@ const StudentDetailPage = () => {
         fetchNotes();
     }, [fetchNotes]); 
 
-    // RETORNOS CONDICIONALES (Se mantienen intactos)
+    // RETORNOS CONDICIONALES
     if (loading && !error) {
         return (
             <>
                 <Navbar />
-                <div style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ padding: '20px', textAlign: 'center', color: '#f5f5f5' }}>
                     <h1>Cargando notas y perfil del estudiante...</h1> 
                 </div>
             </>
@@ -88,10 +97,10 @@ const StudentDetailPage = () => {
         return (
             <>
                 <Navbar />
-                <div style={{ padding: '20px', color: 'red', textAlign: 'center' }}>
-                    <h1>Error de Carga</h1>
-                    <p>{errorMessage}</p>
-                    <Link to="/" style={{ marginTop: '15px', display: 'block', textDecoration: 'underline' }}>
+                <div style={{ padding: '40px 20px', color: '#ffeba7', textAlign: 'center', backgroundColor: '#1f2029' }}>
+                    <h1 style={{ color: '#e3342f' }}>Error de Carga</h1>
+                    <p style={{ color: '#d3d3d3' }}>{errorMessage}</p>
+                    <Link to="/dashboard" className="detail-return-link" style={{ marginTop: '20px', textDecoration: 'none' }}> 
                         &larr; Volver al Panel de Control
                     </Link>
                 </div>
@@ -108,31 +117,22 @@ const StudentDetailPage = () => {
     return (
         <>
             <Navbar /> 
-            <div className="student-detail-main" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}> 
+            <div className="student-detail-main-content"> 
                 
-                {/* ✅ ÚNICA INSTANCIA DEL BOTÓN DE RETORNO (FUERA DE LA COLUMNA FLEX) */}
-                <Link 
-                    to="/dashboard" 
-                    style={{ 
-                        display: 'inline-block', 
-                        marginBottom: '20px', 
-                        textDecoration: 'underline', 
-                        color: 'blue' 
-                    }}
-                >
+                {/* Enlace de retorno con estilo de acento */}
+                <Link to="/dashboard" className="detail-return-link"> 
                     &larr; Volver al Panel de Control 
                 </Link>
                 
-                {/* ESTRUCTURA FLEX: Contiene SOLO las dos columnas */}
-                <div style={{ display: 'flex', gap: '30px' }}>
+                <div className="student-detail-grid"> 
                     
-                    {/* 1. SECCIÓN DE PERFIL (Solo una instancia de ProfileSection) */}
-                    <div style={{ flex: '0 0 300px', paddingRight: '30px' }}>
+                    {/* 1. SECCIÓN DE PERFIL */}
+                    <div className="profile-column"> 
                         <ProfileSection student={estudiante} promedio={promedio} /> 
                     </div>
                     
                     {/* 2. SECCIÓN DE NOTAS */}
-                    <div style={{ flex: '1' }}>
+                    <div className="notes-column">
                         <NotesSection 
                             estudiante={estudiante}
                             notas={notas}
@@ -145,10 +145,6 @@ const StudentDetailPage = () => {
                         />
                     </div>
                 </div>
-                
-                {/* ❌ ELIMINADO: La sección de <Link> y el segundo <ProfileSection> duplicado. */}
-                {/* ❌ ELIMINADO: El <div style={{ flex: '1' }}> de NotesSection estaba fuera de lugar. */}
-
             </div>
         </>
     );

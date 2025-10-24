@@ -1,37 +1,42 @@
-// src/components/ProfileSection.jsx (CÓDIGO CORREGIDO)
+// src/components/ProfileSection.jsx (INTEGRADO CON ESTILOS OSCUROS)
 
 import React from 'react';
 
 const ProfileSection = ({ student, promedio }) => {
 
     if (!student) {
-        return <div className="profile-card">Cargando perfil...</div>;
+        // Usamos la clase para que el mensaje de carga también tenga el estilo oscuro
+        return <div className="profile-card">Cargando perfil...</div>; 
     }
     
+    // Determinamos la clase CSS basada en el promedio (para el color condicional)
+    const averageClass = (promedio || 0) >= 3.0 ? 'average-approved' : 'average-failed';
+    
     return (
-        <div style={{ padding: '15px', border: '1px solid #ccc', borderRadius: '8px', boxShadow: '2px 2px 5px rgba(0,0,0,0.1)' }}>
+        // ✅ Aplicamos la clase principal 'profile-card'
+        <div className="profile-card"> 
             <h2>Perfil de {student.nombre}</h2>
             <p><strong>Código:</strong> {student.codigo}</p>
             <p><strong>Grado:</strong> {student.grado}</p>
             
-            <p><strong>Promedio General:</strong> 
-                {/* ✅ CORRECCIÓN: Usa (promedio || 0).toFixed(2) */}
-                <span style={{ fontWeight: 'bold', color: promedio >= 3.0 ? 'green' : 'red' }}>
+            <p>
+                <strong>Promedio General:</strong> 
+                <span className={`average-value ${averageClass}`}> {/* Aplicamos las clases condicionales */}
                     {(promedio || 0).toFixed(2)}
                 </span>
             </p>
             
-            <h3 style={{ marginTop: '15px', borderTop: '1px solid #eee', paddingTop: '10px' }}>Contacto</h3>
+            {/* El estilo de los h3 y h4 se maneja en el CSS ahora */}
+            <h3>Contacto</h3> 
             <p><strong>Teléfono:</strong> {student.telefono}</p>
             <p><strong>Email:</strong> {student.email}</p>
             
             {student.acudiente && (
-                <div style={{ marginTop: '15px' }}>
-                    <h4 style={{ margin: 0 }}>Acudiente</h4>
-                    <p style={{ margin: '5px 0' }}>**Nombre:** {student.acudiente.nombre}</p>
-                    <p style={{ margin: '5px 0' }}>**Teléfono:** {student.acudiente.telefono}</p>
-                    {/* ✅ CORRECCIÓN: Agrega el campo de correo electrónico del acudiente */}
-                    <p style={{ margin: '5px 0' }}>**Email:** {student.acudiente.email}</p> 
+                <div> {/* Eliminamos el estilo en línea */}
+                    <h4>Acudiente</h4>
+                    <p><strong>Nombre:</strong> {student.acudiente.nombre}</p>
+                    <p><strong>Teléfono:</strong> {student.acudiente.telefono}</p>
+                    <p><strong>Email:</strong> {student.acudiente.email}</p> 
                 </div>
             )}
         </div>

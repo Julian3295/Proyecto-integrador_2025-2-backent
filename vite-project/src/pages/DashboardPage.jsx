@@ -1,10 +1,12 @@
-// src/pages/DashboardPage.jsx
+// src/pages/DashboardPage.jsx (CORREGIDO CON ESTILOS OSCUROS)
 
 import React, { useEffect, useState } from 'react';
-import ReportCard from '../components/ReportCard'
+// import ReportCard from '../components/ReportCard' // ❌ Lo sustituimos por la estructura HTML/CSS
 import { useNavigate, Link } from 'react-router-dom';
 import { getPlatformReports, getStudents } from '../api/reportService';
-import Header from '../components/Header';
+// Asumo que Navbar es tu componente de navegación principal, si es Header, cámbialo de vuelta.
+import Navbar from '../components/Navbar'; 
+
 
 const DashboardPage = () => {
     const navigate = useNavigate();
@@ -57,9 +59,8 @@ const DashboardPage = () => {
     // 1. Mostrar estado de carga (Return si loading es true)
     if (loading) {
         return (
-            // 🎯 Usamos un Fragmento (<>) para devolver el Header y el mensaje de carga
             <>
-                <Header /> 
+                <Navbar /> {/* Asumimos Navbar */}
                 <div className="dashboard-loading" style={{ padding: '20px' }}>
                     <h1>Cargando Dashboard...</h1>
                     <p>Preparando reportes y lista de estudiantes...</p>
@@ -67,62 +68,74 @@ const DashboardPage = () => {
             </>
         );
     }
+    
+    // Preparar el array de estadísticas para mapear con las nuevas clases CSS
+    const statsArray = reports ? [
+        { title: "Total de Estudiantes", value: reports.totalEstudiantes },
+        { title: "Total de Profesores", value: reports.totalProfesores },
+        { title: "Estudiantes Aprobados", value: reports.aprobados },
+        { title: "Estudiantes Reprobados", value: reports.reprobados }
+    ] : [];
 
-    const estudiantes = studentsList; 
 
     // 2. Renderizar el Dashboard (Return principal)
     return (
-        // 🎯 Usamos un Fragmento (<>) para devolver el Header y el contenido principal
-        <>
-            <Header /> 
-            <div className="dashboard-content" style={{ padding: '0 20px 20px' }}>
-                <h1>Panel de Control Principal</h1>
-                <p>Bienvenido, {currentUser ? currentUser.nombre : 'Usuario'}!</p>
+        <div className="main-dashboard-container"> {/* Añadimos un contenedor principal */}
+            <Navbar /> 
+            
+            <div className="dashboard-content" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+                <h1 style={{ color: '#f5f5f5' }}>Panel de Control Principal</h1>
+                <p style={{ color: '#d3d3d3' }}>Bienvenido, {currentUser ? currentUser.nombre : 'Usuario'}!</p>
                 
-                {/* Sección de Tarjetas de Reporte */}
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginBottom: '40px' }}>
-                    
-                    {reports && (
-                        <>
-                            <ReportCard title="Total de Estudiantes" value={reports.totalEstudiantes} icon="🧑‍🎓" />
-                            <ReportCard title="Total de Profesores" value={reports.totalProfesores} icon="👨‍🏫" />
-                            <ReportCard title="Estudiantes Aprobados" value={reports.aprobados} icon="✅" />
-                            <ReportCard title="Estudiantes Reprobados" value={reports.reprobados} icon="❌" />
-                        </>
-                    )}
+                {/* ------------------------------------------- */}
+                {/* 1. SECCIÓN DE TARJETAS DE REPORTE (ESTADÍSTICAS) */}
+                {/* ------------------------------------------- */}
+                
+                {/* ✅ Aplicamos la clase CSS 'stats-grid' */}
+                <div className="stats-grid" > 
+                    {statsArray.map((stat, index) => (
+                        // ✅ Aplicamos la clase CSS 'stat-card'
+                        <div key={index} className="stat-card"> 
+                            <p className="stat-title">{stat.title}</p>
+                            <p className="stat-value">{stat.value}</p>
+                        </div>
+                    ))}
                 </div>
 
-                {/* ------------------------------------------- */}
-                {/* SECCIÓN DE GESTIÓN DE NOTAS */}
-                {/* ------------------------------------------- */}
+                {/* Separador */}
+                <hr style={{ margin: '40px 0', borderColor: '#444' }} />
                 
-                <hr style={{ margin: '40px 0' }} />
+                {/* ------------------------------------------- */}
+                {/* 2. SECCIÓN DE GESTIÓN DE NOTAS (LISTA DE ESTUDIANTES) */}
+                {/* ------------------------------------------- */}
                 
                 <h2>Gestión de Notas por Estudiante</h2>
                 
-                {estudiantes.length === 0 && <p>No se encontraron estudiantes para gestionar.</p>}
+                {studentsList.length === 0 && <p>No se encontraron estudiantes para gestionar.</p>}
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-                    {estudiantes.map(est => (
-                        <div 
+                {/* ✅ Aplicamos la clase CSS 'student-card-grid' */}
+                <div className="student-card-grid">
+                    {studentsList.map(est => (
+                        // ✅ Aplicamos la clase CSS 'student-card'
+                        <Link 
                             key={est.id} 
-                            style={{ border: '1px solid #ccc', padding: '15px', borderRadius: '5px' }}
+                            to={`/estudiantes/${est.id}`} 
+                            className="student-card" 
                         >
-                            <h3>{est.nombre}</h3>
-                            <p>Código: {est.codigo}</p>
+                            {/* ✅ Aplicamos las clases CSS 'student-name' y 'student-code' */}
+                            <p className="student-name">{est.nombre}</p> 
+                            <p className="student-code">Código: {est.codigo}</p>
                             
-                            <Link 
-                                to={`/estudiantes/${est.id}`} 
-                                style={{ display: 'inline-block', marginTop: '10px', color: 'teal', textDecoration: 'none', fontWeight: 'bold' }}
-                            >
-                                Ver Notas Detalladas ➡️
-                            </Link>
-                        </div>
+                            {/* ✅ Aplicamos la clase CSS 'detail-link-btn' */}
+                            <span className="detail-link-btn">
+                                Ver Notas Detalladas <span style={{ marginLeft: '8px' }}>&rarr;</span>
+                            </span>
+                        </Link>
                     ))}
                 </div>
                 
             </div>
-        </>
+        </div>
     );
     
 }; 
