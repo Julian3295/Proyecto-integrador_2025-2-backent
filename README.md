@@ -1,4 +1,4 @@
-# [NOMBRE DEL PROYECTO] - Gestión de Notas y Acompañamiento Estudiantil
+# BrainNote - Gestión de Notas y Acompañamiento Estudiantil
 
 [![React](https://img.shields.io/badge/React-19.1.1-61DAFB.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.1.7-646CFF.svg)](https://vitejs.dev/)
