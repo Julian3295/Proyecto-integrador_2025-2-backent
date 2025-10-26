@@ -4,7 +4,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.1.7-646CFF.svg)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**[NOMBRE DEL PROYECTO]** es una aplicación web moderna diseñada para el personal educativo, facilitando la administración integral del progreso académico, la gestión de perfiles de estudiantes y la consulta y edición de calificaciones.
+**BrainNote** es una aplicación web moderna diseñada para el personal educativo, facilitando la administración integral del progreso académico, la gestión de perfiles de estudiantes y la consulta y edición de calificaciones.
 
 ## 📋 Descripción
 
