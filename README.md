@@ -1,4 +1,4 @@
-# BrainNote - Gestión de Notas y Acompañamiento Estudiantil
+# PROYECTO-INTEGRADOR_2025-2-BACKENT - Gestión de Notas y Acompañamiento Estudiantil
 
 [![React](https://img.shields.io/badge/React-19.1.1-61DAFB.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-7.1.7-646CFF.svg)](https://vitejs.dev/)
@@ -19,14 +19,14 @@ Esta plataforma tiene como objetivo principal digitalizar y centralizar los proc
 
 ### Frontend
 - **React 19.1.1**
-- **Vite 7.1.7** (Herramienta de construcción).
-- **React Router DOM 7.9.3** (Enrutamiento).
-- **SweetAlert2 11.23.0** (Alertas y UX).
+- **Vite** (Herramienta de construcción).
+- **React Router DOM** (Enrutamiento).
+- **SweetAlert2** (Alertas y UX).
 - **React Icons (fa)** (Iconografía).
 
 ### Herramientas de Desarrollo y Backend Simulado
-- **ESLint 9.36.0** (Análisis de código).
-- **JSON Server 1.0.0-beta.3** (Para simular la API REST durante el desarrollo).
+- **ESLint** (Análisis de código).
+- **JSON Server** (Para simular la API REST durante el desarrollo).
 
 ### Estilos y Diseño
 - **CSS3** (Estilos personalizados, Dark Mode).
@@ -42,5 +42,7 @@ Esta plataforma tiene como objetivo principal digitalizar y centralizar los proc
 
 1. **Clonar el repositorio**
    ```bash
-   git clone [https://docs.github.com/es/repositories/creating-and-managing-repositories/quickstart-for-repositories](https://docs.github.com/es/repositories/creating-and-managing-repositories/quickstart-for-repositories) 
-   cd [CARPETA DEL PROYECTO]
+   # Utiliza el nombre de tu repositorio completo
+   git clone [https://github.com/Julian3295/Proyecto-integrador_2025-2-backent.git](https://github.com/Julian3295/Proyecto-integrador_2025-2-backent.git) 
+   cd vite-project
+
