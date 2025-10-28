@@ -20,7 +20,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa; /* Fondo general de la página */
-    color: var(--color-text-light); /* Color de texto predeterminado (lo vamos a sobrescribir) */
+    color: var(--color-text-light); 
 }
 
 h1, h2, h3, h4, p {
@@ -33,66 +33,144 @@ a {
 }
 
 
-/* 2. ESTILOS DE LAYOUT PRINCIPAL (DashboardPage) */
-.main-layout-container {
+/* 2. ESTILOS DE LAYOUT PRINCIPAL */
+
+/* Contenedor principal de la aplicación */
+.app-container {
     display: flex;
-    min-height: calc(100vh - 60px); /* Resta la altura del Navbar */
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--color-background-dark); /* Asegura que si hay huecos, es oscuro */
 }
 
-.dashboard-content {
-    flex-grow: 1;
-    padding: 30px;
-    background-color: var(--color-background-dark); /* Fondo oscuro para el contenido principal */
-}
-.dashboard-content h1,
-.dashboard-content h2,
-.dashboard-content p {
-    color: var(--color-text-light); /* Asegura que el texto sea claro sobre el fondo oscuro */
+/* Contenedor que junta el Sidebar y el Contenido de la Página */
+.main-content-wrapper {
+    display: flex;
+    flex: 1; 
 }
 
+/* Área de contenido de la página (donde va el Dashboard, Detail, Profile, Subjects) */
+.page-content {
+    flex: 1; /* Ocupa el resto del ancho */
+    padding: 30px; /* Un poco más de padding */
+    /* 🎯 CAMBIO CRUCIAL: Aplicamos el fondo oscuro aquí */
+    background-color: var(--color-background-dark); 
+    color: var(--color-text-light); /* Texto claro por defecto */
+}
+/* Aseguramos que el texto por defecto en el page-content sea claro */
+.page-content h1,
+.page-content h2,
+.page-content p {
+    color: var(--color-text-light); 
+}
+
+
+/* --- SECCIONES MOVIDAS O SIMPLIFICADAS --- */
 
 /* 3. ESTILOS DEL NAVBAR (Barra superior) */
 .app-navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: #2c3e50; /* Color oscuro para la barra superior */
+    color: white;
     padding: 10px 30px;
-    background-color: #222; /* Fondo oscuro para el navbar */
-    color: var(--color-text-light);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    height: 60px; /* Altura fija */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); 
+    height: 60px; 
 }
+
 .navbar-logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--color-text-light);
 }
-.navbar-button {
-    background-color: #dc3545; /* Rojo para Cerrar Sesión */
+
+.navbar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+}
+
+.logout-button {
+    background-color: #e74c3c; 
     color: white;
-    padding: 8px 15px;
     border: none;
-    border-radius: 4px;
+    padding: 8px 15px;
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+}
+
+/* 4. ESTILOS DE ASIDE (Menú Lateral) */
+.aside-menu {
+    width: 250px;
+    background-color: #34495e; 
+    color: white;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100vh - 60px); 
+}
+
+.aside-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.aside-button {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: #ecf0f1; 
+    text-decoration: none;
+    font-size: 1.1rem;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.aside-button:hover {
+    background-color: #4a637a;
+}
+
+.aside-icon {
+    margin-right: 10px;
+    font-size: 1.3rem;
+}
+
+.active-aside {
+    background-color: #1abc9c; 
+    color: white;
     font-weight: bold;
 }
 
+.active-aside:hover {
+    background-color: #16a085;
+}
 
-/* 4. ESTILOS DE ASIDE (Menú lateral, según la imagen sin estilo) */
-/* Lo hemos dejado simple ya que no tenemos el CSS completo */
-.app-aside {
-    width: 200px; /* Ancho fijo para el menú */
-    background-color: #f4f4f4; /* Fondo claro para el aside */
-    padding: 20px 0;
+.logout-aside-container {
+    padding: 20px;
+    border-top: 1px solid #4a637a;
 }
-.app-aside a {
-    display: block;
-    padding: 10px 20px;
-    color: #333;
-    text-decoration: none;
+
+.logout-aside-button {
+    color: #e74c3c; 
+    font-weight: bold;
 }
-.app-aside a:hover {
-    background-color: #e9e9e9;
+
+.logout-aside-button:hover {
+    background-color: #4a637a;
+    color: #c0392b; 
 }
 
 
@@ -135,7 +213,7 @@ a {
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s;
-    display: block; /* Asegura que toda la tarjeta sea clickable */
+    display: block; 
 }
 .report-card:hover {
     transform: translateY(-3px);
@@ -160,18 +238,17 @@ a {
 
 /* 7. ESTILOS DEL FOOTER (Fondo turquesa) */
 .app-footer {
-    background-color: var(--color-accent); /* Turquesa */
+    background-color: var(--color-accent); 
     color: white;
     padding: 20px 30px;
     font-size: 0.9rem;
-    /* Para que el Footer no se pegue al aside, lo forzamos al ancho completo */
     width: 100%; 
 }
 .footer-content-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1200px; /* Limita el ancho del contenido */
+    max-width: 1200px; 
     margin: 0 auto;
 }
 .footer-links a {
@@ -185,74 +262,4 @@ a {
 .copyright-text {
     color: white;
     margin: 0;
-}
-
-/* 3. ESTILOS DEL NAVBAR (Barra superior) */
-.app-navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 30px;
-    background-color: #222; /* Fondo oscuro para el navbar */
-    color: var(--color-text-light);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Agrega sombra si quieres */
-    height: 60px; /* Altura fija */
-}
-.navbar-logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--color-text-light);
-}
-.navbar-button {
-    background-color: #dc3545; /* Rojo para Cerrar Sesión */
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-/* src/index.css (SOLO ACTUALIZANDO LA SECCIÓN 4 DE ASIDE) */
-
-/* 4. ESTILOS DE ASIDE (Menú lateral) */
-.aside-menu { /* Usa la clase de tu Aside.jsx */
-    width: 250px; /* Ancho fijo para el menú */
-    background-color: #3f3f3f; /* Fondo gris oscuro para que contraste con el dashboard */
-    padding: 20px 0;
-    flex-shrink: 0; /* Evita que se encoja */
-}
-
-.aside-list {
-    list-style: none;
-}
-
-.aside-list li {
-    margin-bottom: 5px;
-}
-
-.aside-button { /* Usa la clase de tu Aside.jsx */
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    color: var(--color-text-light); /* Texto blanco/claro */
-    font-weight: 500;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.aside-button:hover {
-    background-color: #555; /* Un gris un poco más claro al pasar el ratón */
-    color: white;
-}
-
-.aside-button.active-aside { /* Estilo para el enlace activo */
-    background-color: var(--color-accent); /* Turquesa para el indicador */
-    color: white;
-    border-left: 5px solid var(--color-primary); /* Línea azul a la izquierda */
-    padding-left: 15px; /* Ajusta el padding por la línea */
-}
-
-.aside-icon {
-    margin-right: 10px;
-    font-size: 1.1rem;
 }

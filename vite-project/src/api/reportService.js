@@ -1,6 +1,6 @@
 // src/api/reportService.js (VERSIÓN FINAL Y FUNCIONAL)
 
-const BASE_URL = '/api'; // Usamos el proxy de Vite
+const BASE_URL = 'https://api-sistema-notas.onrender.com'; // Usamos el proxy de Vite
 
 // Función auxiliar para obtener datos
 const fetchData = async (endpoint) => {

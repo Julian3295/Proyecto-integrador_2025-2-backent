@@ -1,28 +1,59 @@
 // src/api/authService.js
 
-const BASE_URL = '/api'; // 🎯 Usar /api para activar el proxy
+// La URL base es simplemente la dirección de Render.
+const API_BASE_URL = 'https://api-sistema-notas.onrender.com'; 
 
+/**
+ * Función para iniciar sesión llamando al recurso /usuarios de la API.
+ * * NOTA: JSON Server no tiene un endpoint /login por defecto. 
+ * Esta función simula la autenticación obteniendo el usuario por email y 
+ * luego verificando la contraseña en el cliente.
+ * * @param {string} email El correo electrónico del usuario.
+ * @param {string} password La contraseña del usuario.
+ * @returns {Promise<object>} El objeto de usuario si el login es exitoso.
+ * @throws {Error} Lanza un error si la solicitud falla o si las credenciales son incorrectas.
+ */
 export const loginUser = async (email, password) => {
     try {
-        const response = await fetch(`${BASE_URL}/usuarios`); 
-        
-        // Si el proxy falló, el catch lo toma como un error de conexión, que es el mensaje que ves.
+        // 1. Intentar obtener el usuario por email
+        // La URL será: https://api-sistema-notas.onrender.com/usuarios?email=ana.garcia@escuela.edu
+        const response = await fetch(`${API_BASE_URL}/usuarios?email=${email}`, {
+            method: 'GET', // Cambiamos a GET para buscar el usuario
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
         if (!response.ok) {
-             throw new Error(`Error en la conexión a /usuarios: ${response.status}`);
+            // Manejar errores de conexión o servidor
+            throw new Error(`Error ${response.status}: Error al buscar el usuario.`);
         }
 
-        const usuarios = await response.json();
+        const users = await response.json();
 
-        // Lógica de Búsqueda correcta
-        const usuarioEncontrado = usuarios.find(u => 
-            u.email === email && u.password === password 
-        );
-        
-        return usuarioEncontrado || null; 
+        // 2. Verificar si se encontró el usuario
+        if (users.length === 0) {
+            throw new Error("Credenciales incorrectas. Verifique email y contraseña.");
+        }
+
+        const user = users[0];
+
+        // 3. Verificar la contraseña
+        // IMPORTANTE: Esto asume que la contraseña está almacenada en el JSON
+        // en texto plano (como se ve en la imagen de los datos de usuarios).
+        if (user.password !== password) {
+            throw new Error("Credenciales incorrectas. Verifique email y contraseña.");
+        }
+
+        // 4. Si todo es correcto, devolver el objeto del usuario autenticado
+        return user;
 
     } catch (error) {
-        console.error("Fallo la simulación de Login:", error);
-        // Aquí es donde el error se convierte en "Error del servidor."
-        throw new Error('Error de conexión.');
+        console.error("Fallo en la llamada a la API de login (JSON Server Logic):", error);
+        // Si el error es de credenciales, lo propagamos para mostrarlo al usuario
+        if (error.message.includes("Credenciales")) {
+            throw error;
+        }
+        throw new Error("Error de conexión. Intente de nuevo más tarde.");
     }
 };

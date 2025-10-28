@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// Ya no necesitas 'import App from './App.jsx';'
-
+// Importamos el AuthProvider directamente aquí
+import { AuthProvider } from './context/AuthContext'; 
 import { RouterProvider } from 'react-router-dom'; 
-import { router } from './router/index.jsx'; // Asegúrate de que esta ruta sea correcta
+import { router } from './router/index.jsx'; 
 import './index.css'; 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* ¡Esto es lo único que debe estar aquí! */}
-    <RouterProvider router={router} /> 
+    {/* ¡ESTO ES LO CRUCIAL! Envolvemos el RouterProvider con AuthProvider. */}
+    <AuthProvider>
+        <RouterProvider router={router} /> 
+    </AuthProvider>
   </React.StrictMode>,
 );

@@ -1,71 +1,80 @@
-// src/components/Aside.jsx (MODIFICADO)
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-// Asumo que usas react-icons para los íconos (FaGraduationCap)
-import { FaHome, FaGraduationCap, FaBook, FaUser } from 'react-icons/fa'; 
+import { FaHome, FaGraduationCap, FaBook, FaUser, FaSignOutAlt } from 'react-icons/fa'; // Asegúrate de tener estos iconos
 
-const Aside = () => {
+const Aside = ({ logout, userName }) => {
     const location = useLocation();
+
+    // Función auxiliar para saber si el enlace está activo
+    const isActive = (path) => location.pathname === path;
     
-    // Función para verificar si un enlace está activo
-    const isActive = (path) => {
-        // Verifica si la ruta actual comienza con la ruta del enlace
-        // Esto sirve para /dashboard y /dashboard#students
-        return location.pathname === path || (location.pathname === '/dashboard' && location.hash === path);
+    // --- ESTILOS INLINE PARA REPLICAR EL DISEÑO ---
+    const asideStyle = {
+        width: '240px', // Ancho fijo para la barra lateral
+        minHeight: '100vh', 
+        backgroundColor: '#343a40', // Fondo oscuro (gris muy oscuro)
+        padding: '20px 0',
+        color: '#f8f9fa', // Texto claro
+        boxShadow: '2px 0 5px rgba(0, 0, 0, 0.5)',
+        position: 'fixed', // Para que quede fijo a la izquierda
+        zIndex: 100
     };
-    
+
+    const linkStyle = (path) => ({
+        display: 'flex',
+        alignItems: 'center',
+        padding: '12px 20px',
+        textDecoration: 'none',
+        color: isActive(path) ? '#00bcd4' : '#f8f9fa', // Color de texto: azul si activo, blanco si inactivo
+        backgroundColor: isActive(path) ? '#495057' : 'transparent', // Fondo: gris oscuro si activo
+        borderLeft: isActive(path) ? '5px solid #00bcd4' : '5px solid transparent', // Barra de color activa
+        transition: 'background-color 0.3s, border-left 0.3s'
+    });
+    // ----------------------------------------------
+
+
     return (
-        <aside className="aside-menu">
-            <ul className="aside-list">
-                
-                {/* Home/Dashboard Principal */}
-                <li>
-                    <Link 
-                        to="/dashboard" 
-                        className={`aside-button ${isActive('/dashboard') && !location.hash ? 'active-aside' : ''}`}
-                    >
-                        <FaHome className="aside-icon" /> Home
-                    </Link>
-                </li>
-                
-                {/* 1. Estudiantes (El enlace que quieres enfocar) */}
-                <li>
-                    <Link 
-                        // Navega al dashboard con un hash #students
-                        to="/dashboard#students" 
-                        className={`aside-button ${isActive('#students') ? 'active-aside' : ''}`}
-                    >
-                        <FaGraduationCap className="aside-icon" /> Estudiantes
-                    </Link>
-                </li>
-                
-                {/* 2. Mis Materias (Ejemplo) */}
-                <li>
-                    <Link 
-                        to="/materias" // Asume que tienes esta ruta
-                        className={`aside-button ${isActive('/materias') ? 'active-aside' : ''}`}
-                    >
-                        <FaBook className="aside-icon" /> Mis Materias
-                    </Link>
-                </li>
-                
-                {/* 3. Perfil (Ejemplo) */}
-                <li>
-                    <Link 
-                        to="/perfil" // Asume que tienes esta ruta
-                        className={`aside-button ${isActive('/perfil') ? 'active-aside' : ''}`}
-                    >
-                        <FaUser className="aside-icon" /> Perfil
-                    </Link>
-                </li>
-            </ul>
-            {/* Opcional: El botón de cerrar sesión que está en el Navbar lo puedes duplicar aquí 
-            <div style={{ marginTop: 'auto', padding: '20px 0 20px 20px' }}>
-                <button className="menu-item logout-button" onClick={handleLogout}>
+        <aside style={asideStyle}>
+            <nav>
+                <Link to="/dashboard" style={linkStyle("/dashboard")}>
+                    <FaHome style={{ marginRight: '10px' }} />
+                    Home
+                </Link>
+                <Link to="/estudiantes" style={linkStyle("/estudiantes")}>
+                    <FaGraduationCap style={{ marginRight: '10px' }} />
+                    Estudiantes
+                </Link>
+                <Link to="/materias" style={linkStyle("/materias")}>
+                    <FaBook style={{ marginRight: '10px' }} />
+                    Mis Materias
+                </Link>
+                <Link to="/perfil" style={linkStyle("/perfil")}>
+                    <FaUser style={{ marginRight: '10px' }} />
+                    Perfil
+                </Link>
+            </nav>
+            
+            {/* Si necesitas un botón de cerrar sesión en el Aside también */}
+            <div style={{ position: 'absolute', bottom: '20px', width: '100%', padding: '0 20px' }}>
+                <button 
+                    // onClick={logout} // Asumo que `logout` vendría de props o contexto si lo usas aquí
+                    style={{ 
+                        width: '100%', 
+                        padding: '10px', 
+                        backgroundColor: '#dc3545', // Rojo para salir
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                >
+                    <FaSignOutAlt style={{ marginRight: '8px' }} />
                     Cerrar Sesión
                 </button>
             </div>
-            */}
         </aside>
     );
 };
